@@ -1,4 +1,5 @@
 import streamlit as st
+from pages.weather_page import show_weather_page
 
 def show_home_page():
 
@@ -241,10 +242,9 @@ def show_home_page():
                     )
 
     elif menu == "Weather Forecast":
+        show_weather_page()
 
-        st.title("🌤️ Weather Forecast")
-
-        st.info("Weather forecast feature coming soon.")
+        
 
     elif menu == "Activity Planner":
 
