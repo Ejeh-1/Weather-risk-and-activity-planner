@@ -2,64 +2,122 @@ import streamlit as st
 
 def show_home_page():
 
-    """Display the home page of the Weather Risk & Outdoor Activity Planner."""
+    """Display the home page of the application."""
 
-    st.title("🌦️ Weather Risk & Outdoor Activity Planner")
+    # Sidebar navigation
 
-    st.write(
+    st.sidebar.title("🌦️ WEATHER PLANNER")
 
-        "Welcome! Plan your outdoor activities safely "
+    menu = st.sidebar.radio(
 
-        "with weather forecasts and risk assessments."
+        "Navigation",
 
-    )
+        [
 
-    st.subheader("Plan Your Outdoor Activity")
+            "Home",
 
-    # Location input
+            "Weather Forecast",
 
-    location = st.text_input("Enter your location:")
+            "Activity Planner",
 
-    # Activity selection
+            "Weather History"
 
-    activities = [
-
-        "Football",
-
-        "Jogging",
-
-        "Farming",
-
-        "Picnic",
-
-        "Travelling",
-
-        "Outdoor events"
-
-    ]
-
-    activity = st.selectbox(
-
-        "Select your outdoor activity:",
-
-        activities
+        ]
 
     )
 
-    # Planning button
+    # Home page
 
-    if st.button("Check Weather Risk"):
+    if menu == "Home":
 
-        if not location.strip():
+        st.title("🌦️ Weather Risk & Outdoor Activity Planner")
 
-            st.warning("Please enter your location.")
+        st.write(
 
-        else:
+            "Welcome! Plan your outdoor activities safely "
 
-            st.success(
+            "with weather forecasts and risk assessments."
 
-                f"Your activity is {activity} in {location}."
+        )
+
+        st.divider()
+
+        st.subheader("📍 Plan Your Outdoor Activity")
+
+        with st.form("activity_form"):
+
+            location = st.text_input(
+
+                "Enter your location:"
 
             )
 
-            st.info("Weather assessment will be available soon.")
+            activities = [
+
+                "Football",
+
+                "Jogging",
+
+                "Farming",
+
+                "Picnic",
+
+                "Travelling",
+
+                "Outdoor events"
+
+            ]
+
+            activity = st.selectbox(
+
+                "Select your outdoor activity:",
+
+                activities
+
+            )
+
+            submitted = st.form_submit_button(
+
+                "Check Weather Risk"
+
+            )
+
+            if submitted:
+
+                if not location.strip():
+
+                    st.warning("Please enter your location.")
+
+                else:
+
+                    st.success(
+
+                        f"Activity: {activity}\n\n"
+
+                        f"Location: {location}"
+
+                    )
+
+                    st.info(
+
+                        "Weather assessment will be available soon."
+
+                    )
+
+    elif menu == "Weather Forecast":
+
+        st.title("🌤️ Weather Forecast")
+
+        st.info("Weather forecast feature coming soon.")
+
+    elif menu == "Activity Planner":
+
+        st.title("🏃 Activity Planner")
+
+        st.info("Activity planning feature coming soon.")
+
+    elif menu == "Weather History":
+
+        st.title("📋 Weather History")
+
+        st.info("Weather history feature coming soon.")
