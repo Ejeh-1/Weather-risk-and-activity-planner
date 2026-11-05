@@ -54,9 +54,9 @@ class ActivityRiskAnalyzer:
         else:
             self.api_key = os.getenv("GEMINI_API_KEY")
 
-    # -----------------------------------------------------------
-    # Step 1: calculate risk points
-    # -----------------------------------------------------------
+    
+    # 1: calculate risk points
+    
     def calculate_risk_points(self, activity, weather):
         """
         activity: name of the activity, e.g. "football"
@@ -117,9 +117,9 @@ class ActivityRiskAnalyzer:
             reasons.append("Very high humidity (" + str(humidity) + "%)")
 
         return points, reasons
-    # -----------------------------------------------------------
-    # Step 2: turn points into a risk level
-    # -----------------------------------------------------------
+    
+    # 2: turn points into a risk level
+   
     def get_risk_level(self, points):
         """Convert risk points into one of the four risk levels."""
         if points <= 1:
@@ -130,9 +130,9 @@ class ActivityRiskAnalyzer:
             return "Risky"
         else:
             return "Should Be Avoided"
-    # -----------------------------------------------------------
-    # Step 3: ask Gemini to explain
-    # -----------------------------------------------------------
+  
+    # 3: ask Gemini to explain
+    
     def get_ai_explanation(self, activity, weather, risk_level, reasons):
         """
         Sends the result to the Gemini API and returns a short explanation.
@@ -184,3 +184,33 @@ class ActivityRiskAnalyzer:
             return backup + " (AI service error: " + str(error) + ")"
         except (KeyError, IndexError, ValueError):
             return backup + " (Could not read the AI response.)"
+   
+    # Main method: this is what the group leader will call
+    
+    def analyze(self, activity, weather, use_ai=True):
+        """
+        Full analysis. Returns a dictionary:
+        {
+            "activity": ...,
+            "risk_level": ...,
+            "risk_points": ...,
+            "reasons": [...],
+            "explanation": ...
+        }
+        """
+        points, reasons = self.calculate_risk_points(activity, weather)
+        level = self.get_risk_level(points)
+
+        if use_ai:
+            explanation = self.get_ai_explanation(activity, weather, level, reasons)
+        else:
+            explanation = "Risk level is " + level + "."
+
+        return {
+            "activity": activity,
+            "risk_level": level,
+            "risk_points": points,
+            "reasons": reasons,
+            "explanation": explanation,
+        }
+        
