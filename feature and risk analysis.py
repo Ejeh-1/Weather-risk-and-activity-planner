@@ -213,4 +213,24 @@ class ActivityRiskAnalyzer:
             "reasons": reasons,
             "explanation": explanation,
         }
+# Test area: runs only when you run this file directly
+#   python activity_risk_analyzer.py
+
+if __name__ == "__main__":
+    analyzer = ActivityRiskAnalyzer()
+
+    test_weather = {
+        "temperature": 36,
+        "humidity": 88,
+        "rain_probability": 70,
+        "wind_speed": 20,
+    }
+
+    result = analyzer.analyze("Football", test_weather)
+
+    print("Activity:", result["activity"])
+    print("Risk level:", result["risk_level"])
+    print("Points:", result["risk_points"])
+    print("Reasons:", result["reasons"])
+    print("Explanation:", result["explanation"])
         
