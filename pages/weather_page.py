@@ -107,3 +107,4 @@ def show_weather_page():
     st.info(
 
         "Your upcoming weather forecast will appear here."
+    )
