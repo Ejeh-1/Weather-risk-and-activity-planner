@@ -117,3 +117,16 @@ class ActivityRiskAnalyzer:
             reasons.append("Very high humidity (" + str(humidity) + "%)")
 
         return points, reasons
+    # -----------------------------------------------------------
+    # Step 2: turn points into a risk level
+    # -----------------------------------------------------------
+    def get_risk_level(self, points):
+        """Convert risk points into one of the four risk levels."""
+        if points <= 1:
+            return "Safe"
+        elif points <= 3:
+            return "Manageable"
+        elif points <= 5:
+            return "Risky"
+        else:
+            return "Should Be Avoided"
