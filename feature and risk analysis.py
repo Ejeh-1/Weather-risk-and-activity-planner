@@ -130,3 +130,57 @@ class ActivityRiskAnalyzer:
             return "Risky"
         else:
             return "Should Be Avoided"
+    # -----------------------------------------------------------
+    # Step 3: ask Gemini to explain
+    # -----------------------------------------------------------
+    def get_ai_explanation(self, activity, weather, risk_level, reasons):
+        """
+        Sends the result to the Gemini API and returns a short explanation.
+        If anything goes wrong we return a simple backup message
+        so the app does not crash.
+        """
+        # Backup explanation (used when AI is not available)
+        if len(reasons) > 0:
+            backup = "Risk level is " + risk_level + ". Problems: " + ", ".join(reasons) + "."
+        else:
+            backup = "Risk level is " + risk_level + ". The weather looks good for " + activity + "."
+
+        # No key = no AI
+        if not self.api_key:
+            return backup + " (AI explanation unavailable: no API key found.)"
+
+        # Write the question (prompt) for Gemini
+        prompt = (
+            "You are a weather safety assistant. "
+            "Activity: " + activity + ". "
+            "Weather: temperature " + str(weather["temperature"]) + "°C, "
+            "humidity " + str(weather["humidity"]) + "%, "
+            "rain chance " + str(weather["rain_probability"]) + "%, "
+            "wind speed " + str(weather["wind_speed"]) + " km/h. "
+            "Risk level: " + risk_level + ". "
+            "In 3 or 4 simple sentences, explain why this activity has this risk level "
+            "and what the person should be careful about."
+        )
+
+        # The data format Gemini expects
+        body = {"contents": [{"parts": [{"text": prompt}]}]}
+        headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": self.api_key,
+        }
+
+        try:
+            response = requests.post(GEMINI_URL, headers=headers, json=body, timeout=15)
+            response.raise_for_status()  # raises an error for bad status codes
+            data = response.json()
+            text = data["candidates"][0]["content"]["parts"][0]["text"]
+            return text.strip()
+
+        except requests.exceptions.Timeout:
+            return backup + " (AI explanation timed out.)"
+        except requests.exceptions.ConnectionError:
+            return backup + " (No internet connection for AI explanation.)"
+        except requests.exceptions.HTTPError as error:
+            return backup + " (AI service error: " + str(error) + ")"
+        except (KeyError, IndexError, ValueError):
+            return backup + " (Could not read the AI response.)"
