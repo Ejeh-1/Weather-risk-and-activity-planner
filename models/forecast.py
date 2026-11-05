@@ -1,0 +1,24 @@
+class Forecast:
+    def __init__(self, weather_data):
+        self.weather_data = weather_data
+
+    def get_current_weather(self):
+        return self.weather_data.get("current", {})
+    
+    def get_hourly_forecast(self):
+        return self.weather_data.get("hourly", {})
+
+    def get_temperature(self):
+        return self.get_current_weather().get("temperature_2m")
+
+    def get_humidity(self):
+        return self.get_current_weather().get("relative_humidity_2m")
+
+    def get_wind_speed(self):
+        return self.get_current_weather().get("wind_speed_10m")
+
+    def get_rain_probability(self):
+        probabilities = self.get_hourly_forecast().get(
+            "precipitation_probability", []
+        )
+        return probabilities
