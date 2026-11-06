@@ -1,24 +1,36 @@
 from services.location_service import LocationService
 
-# Create an instance of the LocationService class
+# Create an instance of LocationService
 
 location_service = LocationService()
 
-# Search for Abuja
+# Ask the user for a city and country code
 
-results = location_service.search_location("Abuja")
+city_name = input("Enter a city: ")
 
-# Check whether any locations were found
+country_code = input("Enter country code (e.g. NG, GB, US): ")
+
+# Search for the city within the specified country
+
+results = location_service.search_location(
+
+    city_name,
+
+    country_code
+
+)
+
+# Display matching locations
 
 if results:
 
     print("\nLOCATION SEARCH SUCCESSFUL!")
 
-    # Display the details of each matching location
+    for index, location in enumerate(results, start=1):
 
-    for location in results:
+        print(f"\nLocation {index}")
 
-        print("------------------------------")
+        print("-" * 40)
 
         print("Name:", location["name"])
 
@@ -32,4 +44,4 @@ if results:
 
 else:
 
-    print("No location found.")
+    print("No matching location found.")
