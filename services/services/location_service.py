@@ -1,4 +1,4 @@
-import requests  # Allows us to make HTTP requests to the Geocoding API
+import requests
 
 class LocationService:
 
@@ -10,45 +10,63 @@ class LocationService:
 
         self.base_url = "https://geocoding-api.open-meteo.com/v1/search"
 
-    def search_location(self, city_name):
+    def search_location(self, city_name, country_code=None):
 
         """
 
-        Search for a city and return its location details.
+        Search for a city, optionally filtering by country code.
 
         Args:
 
-            city_name: The name of the city entered by the user.
+            city_name: Name of the city.
+
+            country_code: Optional two-letter country code.
 
         Returns:
 
-            A list containing matching locations and their coordinates.
+            A list of matching locations.
 
         """
 
-        # Check whether the user entered an empty location
+        # Validate the city name
 
         if not city_name or not city_name.strip():
 
             return []
 
-        # Parameters sent to the Geocoding API
+        # Validate the country code if provided
+
+        if country_code:
+
+            country_code = country_code.strip().upper()
+
+            if len(country_code) != 2 or not country_code.isalpha():
+
+                return []
+
+        # Prepare API request parameters
 
         params = {
 
-            "name": city_name.strip(),  # Remove unnecessary spaces
+            "name": city_name.strip(),
 
-            "count": 5,                 # Return a maximum of 5 matches
+            "count": 10,
 
-            "language": "en",           # Return results in English
+            "language": "en",
 
-            "format": "json"            # Request JSON response
+            "format": "json"
 
         }
 
+        # Add country filter when provided
+
+        if country_code:
+
+            params["countryCode"] = country_code
+
         try:
 
-            # Send a GET request to the Geocoding API
+            # Send request to the Geocoding API
 
             response = requests.get(
 
@@ -60,19 +78,19 @@ class LocationService:
 
             )
 
-            # Raise an exception if the request was unsuccessful
+            # Check for HTTP errors
 
             response.raise_for_status()
 
-            # Convert the API response into a Python dictionary
+            # Convert response into a dictionary
 
             data = response.json()
 
-            # Extract the matching locations from the response
+            # Extract matching locations
 
             locations = data.get("results", [])
 
-            # Return only the location details our application needs
+            # Return relevant location information
 
             return [
 
@@ -94,12 +112,10 @@ class LocationService:
 
             ]
 
-        except requests.exceptions.RequestException as error:
+        except requests.exceptions.RequestException as e:
 
-            # Display an error if the API request fails
+            # Handle API connection errors
 
-            print(f"Location API error: {error}")
-
-            # Return an empty list when no results can be retrieved
+            print(f"Location API error: {e}")
 
             return []
