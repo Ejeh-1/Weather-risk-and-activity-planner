@@ -21,4 +21,17 @@ class Forecast:
         probabilities = self.get_hourly_forecast().get(
             "precipitation_probability", []
         )
-        return probabilities
+
+        next_24_hours = probabilities[:24]
+        valid_values = [
+            value for value in next_24_hours
+            if isinstance(value, (int, float))
+        ]
+        return max(valid_values) if valid_values else None
+    def to_dict(self):
+        return {
+            "temperature": self.get_temperature(),
+            "humidity": self.get_humidity(),
+            "rain_probability": self.get_rain_probability(),
+            "wind_speed": self.get_wind_speed()
+        }
