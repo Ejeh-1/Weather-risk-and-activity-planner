@@ -4,13 +4,21 @@ from services.location_service import LocationService
 
 location_service = LocationService()
 
-# Ask the user to enter a location
+# Ask the user for a city and country code
 
-city_name = input("Enter a city or location: ")
+city_name = input("Enter a city: ")
 
-# Search for the entered location
+country_code = input("Enter country code (e.g. NG, GB, US): ")
 
-results = location_service.search_location(city_name)
+# Search for the city within the specified country
+
+results = location_service.search_location(
+
+    city_name,
+
+    country_code
+
+)
 
 # Display matching locations
 
@@ -22,7 +30,7 @@ if results:
 
         print(f"\nLocation {index}")
 
-        print("------------------------------")
+        print("-" * 40)
 
         print("Name:", location["name"])
 
@@ -36,4 +44,4 @@ if results:
 
 else:
 
-    print("No matching location found.")
+    print("No matching location found."
