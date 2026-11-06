@@ -1,6 +1,8 @@
 import streamlit as st
+from services.location_service import LocationService
 
 def main():
+    location_service = LocationService()
 
     st.set_page_config(
 
@@ -22,7 +24,51 @@ def main():
 
     )
 
-    st.info("Our weather planning system is coming soon!")
+    st.subheader("📍 Search for a Location")
+
+    city_name = st.text_input("Enter your city")
+
+    country_code = st.text_input(
+
+        "Enter country code (optional, e.g. NG, GB, US)"
+
+    )
+
+    if st.button("Search Location"):
+
+        if city_name.strip():
+
+            locations = location_service.search_location(
+
+                city_name, country_code or None
+
+            )
+
+            if locations:
+
+                st.success("Location search successful!")
+
+                for location in locations:
+
+                    st.write(f"**City:** {location['name']}")
+
+                    st.write(f"**Country:** {location['country']}")
+
+                    st.write(f"**Latitude:** {location['latitude']}")
+
+                    st.write(f"**Longitude:** {location['longitude']}")
+
+                    st.write(f"**Timezone:** {location['timezone']}")
+
+                    st.divider()
+
+            else:
+
+                st.warning("No location found. Please try again.")
+
+        else:
+
+            st.warning("Please enter a city name.")
 
 if __name__ == "__main__":
 
