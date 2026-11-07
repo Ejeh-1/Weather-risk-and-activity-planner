@@ -151,91 +151,143 @@ class Rating(Enum):
           @property
           def rating(self):
               return Rating.from_score(self.score)
+class ActivityRiskAnalyzer:
 
-    class ActivityRiskAnalyzer:
+    def __init__(self, activity="football"):
 
-      def __init__(self, activity="football"):
-         if isinstance(activity, ActivityProfile):
-              self.activity = activity
-          else:
-             activity_key = str(activity).strip().lower()
-              if activity_key not in ACTIVITY_PROFILES:
-                  raise ValueError(
-                     f"Unsupported activity: {activity}. "
-                     f"Available activities: "
-                      f"{', '.join(ACTIVITY_PROFILES)}"
-                  )
-              self.activity = ACTIVITY_PROFILES[activity_key]
-      def assess_hour(self, hour):
-         score = 0
-          reasons = []
+        if isinstance(activity, ActivityProfile):
+
+            self.activity = activity
+
+        else:
+
+            activity_key = str(activity).strip().lower()
+
+            if activity_key not in ACTIVITY_PROFILES:
+
+                raise ValueError(
+
+                    f"Unsupported activity: {activity}. "
+
+                    f"Available activities: "
+
+                    f"{', '.join(ACTIVITY_PROFILES)}"
+
+                )
+
+            self.activity = ACTIVITY_PROFILES[activity_key]
+
+    def assess_hour(self, hour):
+
+        score = 0
+
+        reasons = []
+
         limits = self.activity
+
         if hour.temperature is None or hour.apparent_temp is None:
-              raise ValueError("Temperature data is missing.")
-         if hour.apparent_temp > limits.max_temp:
+
+            raise ValueError("Temperature data is missing.")
+
+        if hour.apparent_temp > limits.max_temp:
+
             score += 2
-             reasons.append(
-                  "Temperature is too high for this activity."
-               )
-           if hour.apparent_temp < limits.min_temp:
-             score += 2
-             reasons.append(
-                 "Temperature is too low for this activity."
-              )
-           if hour.rain_probability is None:
-              raise ValueError("Rain probability data is missing.")
-         if hour.rain_probability > limits.max_rain:
-                score += 2
-                reasons.append(
-                    "High probability of rainfall."
-                )
-            if hour.wind_speed is None or hour.wind_gusts is None:
-                raise ValueError("Wind data is missing.")
-            if hour.wind_speed > limits.max_wind:
-                score += 2
-                reasons.append(
-                    "Wind speed is too high."
-                )
-             if hour.wind_gusts >= 60:
-                score += 2
-                reasons.append(
-                    "Dangerous wind gusts expected."
-                )
-            if hour.humidity is not None:
-                if hour.humidity > limits.max_humidity:
-                    score += 1
-                    reasons.append(
-                        "Humidity is too high."
-                    )
-            if hour.uv_index is not None:
-                if hour.uv_index >= 8:
-                    score += 1
-                    reasons.append(
-                        "Very high UV exposure expected."
-                    )
-            if hour.is_thunderstorm:
-                score += 5
-                reasons.append(
-                    "Thunderstorm conditions expected."
-                )
-            return HourAssessment(
-                hour=hour,
-                score=score,
-                reasons=reasons
-            )
-        def assess_hours(self, hours):
-            return [
-                self.assess_hour(hour)
-                for hour in hours
-            ]
-        @staticmethod
-        def summarize(assessments):
-            if not assessments:
-                return {"average": 0.0}
-            average = sum(
-                assessment.score
-                for assessment in assessments
-            ) / len(assessments)
-            return {
-                "average": round(average, 1)
-            }
+
+            reasons.append("Temperature is too high for this activity.")
+
+        if hour.apparent_temp < limits.min_temp:
+
+            score += 2
+
+            reasons.append("Temperature is too low for this activity.")
+
+        if hour.rain_probability is None:
+
+            raise ValueError("Rain probability data is missing.")
+
+        if hour.rain_probability > limits.max_rain:
+
+            score += 2
+
+            reasons.append("High probability of rainfall.")
+
+        if hour.wind_speed is None or hour.wind_gusts is None:
+
+            raise ValueError("Wind data is missing.")
+
+        if hour.wind_speed > limits.max_wind:
+
+            score += 2
+
+            reasons.append("Wind speed is too high.")
+
+        if hour.wind_gusts >= 60:
+
+            score += 2
+
+            reasons.append("Dangerous wind gusts expected.")
+
+        if hour.humidity is not None:
+
+            if hour.humidity > limits.max_humidity:
+
+                score += 1
+
+                reasons.append("Humidity is too high.")
+
+        if hour.uv_index is not None:
+
+            if hour.uv_index >= 8:
+
+                score += 1
+
+                reasons.append("Very high UV exposure expected.")
+
+        if hour.is_thunderstorm:
+
+            score += 5
+
+            reasons.append("Thunderstorm conditions expected.")
+
+        return HourAssessment(
+
+            hour=hour,
+
+            score=score,
+
+            reasons=reasons
+
+        )
+
+    def assess_hours(self, hours):
+
+        return [
+
+            self.assess_hour(hour)
+
+            for hour in hours
+
+        ]
+
+    @staticmethod
+
+    def summarize(assessments):
+
+        if not assessments:
+
+            return {"average": 0.0}
+
+        average = sum(
+
+            assessment.score
+
+            for assessment in assessments
+
+        ) / len(assessments)
+
+        return {
+
+            "average": round(average, 1)
+
+        }
+    
