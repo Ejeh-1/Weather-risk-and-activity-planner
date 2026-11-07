@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, date
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 
@@ -96,7 +96,7 @@ class Forecast:
         # Keeps only valid numeric values
         valid_values = [
             value for value in next_24_hours
-            if isinstance(value, (int, float)) 
+            if isinstance(value, (int, float))
             and not isinstance(value, bool)
         ]
         # Returns the highest probability, or None if unavailable
