@@ -5,63 +5,63 @@ from zoneinfo import ZoneInfo
 Converts Open-Meteo weather codes into readable descriptions
 
 WEATHER_DESCRIPTIONS = {
-0: “Clear sky”,
-1: “Mainly clear”,
-2: “Partly cloudy”,
-3: “Overcast”,
-45: “Fog”,
-48: “Depositing rime fog”,
-51: “Light drizzle”,
-53: “Moderate drizzle”,
-55: “Dense drizzle”,
-56: “Freezing drizzle”,
-57: “Heavy freezing drizzle”,
-61: “Slight rain”,
-63: “Moderate rain”,
-65: “Heavy rain”,
-66: “Freezing rain”,
-67: “Heavy freezing rain”,
-71: “Slight snow”,
-73: “Moderate snow”,
-75: “Heavy snow”,
-77: “Snow grains”,
-80: “Slight rain showers”,
-81: “Moderate rain showers”,
-82: “Violent rain showers”,
-85: “Slight snow showers”,
-86: “Heavy snow showers”,
-95: “Thunderstorm”,
-96: “Thunderstorm with slight hail”,
-99: “Thunderstorm with heavy hail”
-}
+    0: “Clear sky”,
+    1: “Mainly clear”,
+    2: “Partly cloudy”,
+    3: “Overcast”,
+    45: “Fog”,
+    48: “Depositing rime fog”,
+    51: “Light drizzle”,
+    53: “Moderate drizzle”,
+    55: “Dense drizzle”,
+    56: “Freezing drizzle”,
+    57: “Heavy freezing drizzle”,
+    61: “Slight rain”,
+    63: “Moderate rain”,
+    65: “Heavy rain”,
+    66: “Freezing rain”,
+    67: “Heavy freezing rain”,
+    71: “Slight snow”,
+    73: “Moderate snow”,
+    75: “Heavy snow”,
+    77: “Snow grains”,
+    80: “Slight rain showers”,
+    81: “Moderate rain showers”,
+    82: “Violent rain showers”,
+    85: “Slight snow showers”,
+    86: “Heavy snow showers”,
+    95: “Thunderstorm”,
+    96: “Thunderstorm with slight hail”,
+    99: “Thunderstorm with heavy hail”
+    }
 
 @dataclass
 class ForecastHour:
-“”“Stores weather information for a particular hour.”””
+"""Stores weather information for a particular hour."""
 
-time: datetime
-temperature: float
-apparent_temp: float
-rain_probability: float
-wind_speed: float
-wind_gusts: float
-uv_index: float
-humidity: float
-is_thunderstorm: bool
-description: str
+    time: datetime
+    temperature: float
+    apparent_temp: float
+    rain_probability: float
+    wind_speed: float
+    wind_gusts: float
+    uv_index: float
+    humidity: float
+    is_thunderstorm: bool
+    description: str
 
 class Forecast:
-“”“Processes current and hourly weather forecast data.”””
+"""Processes current and hourly weather forecast data."""
 
-def __init__(self, weather_data, location=None):
-    # Stores the weather information returned by the API
-    self.weather_data = weather_data or {}
-    # Stores the location associated with the forecast
-    self.location = location
-    # Gets the timezone provided by the weather API
-    self.timezone = self.weather_data.get("timezone", "UTC")
-    # Gets the current local time for the forecast location
-    self.local_now = self._get_local_now()
+    def __init__(self, weather_data, location=None):
+        # Stores the weather information returned by the API
+        self.weather_data = weather_data or {}
+        # Stores the location associated with the forecast
+        self.location = location
+        # Gets the timezone provided by the weather API
+        self.timezone = self.weather_data.get("timezone", "UTC")
+        # Gets the current local time for the forecast location
+        self.local_now = self._get_local_now()
 def _get_local_now(self):
     """Returns the current time in the forecast location's timezone."""
     try:
