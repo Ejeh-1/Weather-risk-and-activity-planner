@@ -1,7 +1,7 @@
 import requests  # Imports the requests library for making HTTP requests
 
 class WeatherClient:
-“”“Handles communication with the Open-Meteo weather API.”””
+    """Handles communication with the Open-Meteo weather API."""
 
 def __init__(self):
     # Stores the API endpoint used to retrieve weather forecasts
