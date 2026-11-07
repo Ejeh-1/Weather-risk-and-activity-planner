@@ -2,6 +2,7 @@ import streamlit as st
 from pages.weather_page import show_weather_page
 from pages.activity_page import show_activity_page
 from pages.history_page import show_history_page
+from pages.location_page import show_location_page
 
 def show_home_page():
 
@@ -87,7 +88,8 @@ def show_home_page():
 
             "Activity Planner",
 
-            "Weather History"
+            "Weather History",
+            "Location Search"
 
         ]
 
@@ -263,4 +265,8 @@ def show_home_page():
 
     elif menu == "Weather History":
         show_history_page()
+
+    elif menu == "Location Search":
+        show_location_page()
+        
         
