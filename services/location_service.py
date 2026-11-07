@@ -30,19 +30,26 @@ class LocationService:
 
         # Validate the city name
 
-        if not city_name or not city_name.strip():
-
+        if not isinstance(city_name, str):
             return []
+
+        city_name = city_name.strp()
+        if not city_name:
+            return []
+            
 
         # Validate the country code if provided
 
-        if country_code:
+        if country_code is not None:
+            
+            if not isinstance(country_code, str):
+                return []
 
             country_code = country_code.strip().upper()
 
             if len(country_code) != 2 or not country_code.isalpha():
-
                 return []
+            
 
         # Prepare API request parameters
 
@@ -82,35 +89,84 @@ class LocationService:
 
             response.raise_for_status()
 
-            # Convert response into a dictionary
+            # Convert API response
 
-            data = response.json()
+            try:
+                data = response.json()
+
+            except ValueError:
+                print("Location API error: Invalid JSON response")
+                return []
+                
+                
+
+            # Ensure the API response is a dictionary
+
+            if not isinstance(data, dict):
+                return []
+
+            
 
             # Extract matching locations
 
             locations = data.get("results", [])
 
+            # Ensure results contain a list
+
+            if not isinstance(locations, list):
+                return []
+
+              
+
             # Return relevant location information
 
-            return [
+            valid_location = []
 
-                {
+            for location in locations:
 
-                    "name": location["name"],
+                if not isinstance(location, dict):
+                    continue
 
+                # Check for require fields
+                required_field = ["name", "latitude", "longitude"]
+
+                if not all(field in location for field in required_fields):
+                    continue
+
+                # Ensure coordinates are valid numbers
+
+                latitude = location["latitude"]
+
+                longitude = location["longitude"]
+
+                if not isinstance(latitude, (int, float)):
+
+                    continue
+
+                if not isinstance(longitude, (int, float)):
+
+                    continue
+
+                # Check coordinate ranges
+
+                if not -90 <= latitude <= 90:
+
+                    continue
+
+                if not -180 <= longitude <= 180:
+
+                    continue
+
+                valid_locations.append({
+                    "name": location["name],
                     "country": location.get("country"),
-
-                    "latitude": location["latitude"],
-
-                    "longitude": location["longitude"],
-
+                    "latitude": latitude,
+                    "longitude": longitude,
                     "timezone": location.get("timezone")
-
-                }
-
-                for location in locations
-
-            ]
+                })
+            return valid_locations
+            
+ 
 
         except requests.exceptions.RequestException as e:
 
