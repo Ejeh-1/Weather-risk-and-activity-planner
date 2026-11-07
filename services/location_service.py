@@ -158,7 +158,7 @@ class LocationService:
                     continue
 
                 valid_locations.append({
-                    "name": location["name],
+                    "name": location["name"],
                     "country": location.get("country"),
                     "latitude": latitude,
                     "longitude": longitude,
