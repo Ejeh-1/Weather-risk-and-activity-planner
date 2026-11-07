@@ -120,7 +120,7 @@ class LocationService:
 
             # Return relevant location information
 
-            valid_location = []
+            valid_locations = []
 
             for location in locations:
 
