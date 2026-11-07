@@ -125,66 +125,66 @@ ACTIVITY_PROFILES = {
 
     }
 
-  class Rating(Enum):
-        SAFE = "Safe"
-        MANAGEABLE = "Manageable"
-        RISKY = "Risky"
-        AVOID = "Avoid"
+class Rating(Enum):
+    SAFE = "Safe"
+    MANAGEABLE = "Manageable"
+     RISKY = "Risky"
+    AVOID = "Avoid"
 
-        @classmethod
-        def from_score(cls, score):
-            if score <= 1:
-                return cls.SAFE
-            elif score <= 3:
-                return cls.MANAGEABLE
-            elif score <= 5:
-                return cls.RISKY
-            else:
-                return cls.AVOID
+    @classmethod
+    def from_score(cls, score):
+          if score <= 1:
+              return cls.SAFE
+         elif score <= 3:
+            return cls.MANAGEABLE
+         elif score <= 5:
+              return cls.RISKY
+         else:
+             return cls.AVOID
 
-        @dataclass
-        class HourAssessment:
-            hour: object
-            score: float
-            reasons: List[str]
+    @dataclass
+    class HourAssessment:
+         hour: object
+         score: float
+         reasons: List[str]
 
-            @property
-            def rating(self):
-                return Rating.from_score(self.score)
+          @property
+          def rating(self):
+              return Rating.from_score(self.score)
 
-        class ActivityRiskAnalyzer:
+    class ActivityRiskAnalyzer:
 
-        def __init__(self, activity="football"):
-            if isinstance(activity, ActivityProfile):
-                self.activity = activity
-            else:
-                activity_key = str(activity).strip().lower()
-                if activity_key not in ACTIVITY_PROFILES:
-                    raise ValueError(
-                        f"Unsupported activity: {activity}. "
-                        f"Available activities: "
-                        f"{', '.join(ACTIVITY_PROFILES)}"
-                    )
-                self.activity = ACTIVITY_PROFILES[activity_key]
-        def assess_hour(self, hour):
-            score = 0
-            reasons = []
-            limits = self.activity
-            if hour.temperature is None or hour.apparent_temp is None:
-                raise ValueError("Temperature data is missing.")
-            if hour.apparent_temp > limits.max_temp:
-                score += 2
-                reasons.append(
-                    "Temperature is too high for this activity."
-                )
-            if hour.apparent_temp < limits.min_temp:
-                score += 2
-                reasons.append(
-                    "Temperature is too low for this activity."
-                )
-            if hour.rain_probability is None:
-                raise ValueError("Rain probability data is missing.")
-            if hour.rain_probability > limits.max_rain:
+      def __init__(self, activity="football"):
+         if isinstance(activity, ActivityProfile):
+              self.activity = activity
+          else:
+             activity_key = str(activity).strip().lower()
+              if activity_key not in ACTIVITY_PROFILES:
+                  raise ValueError(
+                     f"Unsupported activity: {activity}. "
+                     f"Available activities: "
+                      f"{', '.join(ACTIVITY_PROFILES)}"
+                  )
+              self.activity = ACTIVITY_PROFILES[activity_key]
+      def assess_hour(self, hour):
+         score = 0
+          reasons = []
+        limits = self.activity
+        if hour.temperature is None or hour.apparent_temp is None:
+              raise ValueError("Temperature data is missing.")
+         if hour.apparent_temp > limits.max_temp:
+            score += 2
+             reasons.append(
+                  "Temperature is too high for this activity."
+               )
+           if hour.apparent_temp < limits.min_temp:
+             score += 2
+             reasons.append(
+                 "Temperature is too low for this activity."
+              )
+           if hour.rain_probability is None:
+              raise ValueError("Rain probability data is missing.")
+         if hour.rain_probability > limits.max_rain:
                 score += 2
                 reasons.append(
                     "High probability of rainfall."
