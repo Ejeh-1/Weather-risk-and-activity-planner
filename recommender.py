@@ -103,47 +103,51 @@ class RecommendationEngine:
 
     def window_at(self, assessments: List[HourAssessment], start: time, duration: int) -> TimeWindow:
 
-    for i, a in enumerate(assessments):
+        for i, a in enumerate(assessments):
 
-        if a.hour.time.hour == start.hour:
+            if a.hour.time.hour == start.hour:
 
-            chunk = assessments[i:i + duration]
+                chunk = assessments[i:i + duration]
 
-            if len(chunk) < duration:
-
-                raise InvalidInputError(
-
-                    "The requested duration is not fully available. "
-
-                    "Please choose an earlier starting time."
-
-                )
-
-            for j in range(len(chunk) - 1):
-
-                difference = chunk[j + 1].hour.time - chunk[j].hour.time
-
-                if difference.total_seconds() != 3600:
+                if len(chunk) < duration:
 
                     raise InvalidInputError(
 
-                        "The selected time window contains a gap. "
+                        "The requested duration is not fully available. "
 
-                        "Please choose another starting time."
+                        "Please choose an earlier starting time."
 
                     )
 
-            return TimeWindow(chunk, self._window_score(chunk))
+                for j in range(len(chunk) - 1):
 
-    first, last = assessments[0].hour.time.hour, assessments[-1].hour.time.hour
+                    difference = chunk[j + 1].hour.time - chunk[j].hour.time
 
-    raise InvalidInputError(
+                    if difference.total_seconds() != 3600:
 
-        f"{start:%H:%M} is outside the available hours "
+                        raise InvalidInputError(
 
-        f"({first:02d}:00-{last:02d}:59)."
+                            "The selected time window contains a gap. "
 
-    )
+                            "Please choose another starting time."
+
+                        )
+
+                return TimeWindow(chunk, self._window_score(chunk))
+
+        if not assessments:
+
+            raise InvalidInputError("No available hours to select.")
+
+        first, last = assessments[0].hour.time.hour, assessments[-1].hour.time.hour
+
+        raise InvalidInputError(
+
+            f"{start:%H:%M} is outside the available hours "
+
+            f"({first:02d}:00-{last:02d}:59)."
+
+        )
 
     # ---- advice and checklist ---------------------------------------------
     @staticmethod
