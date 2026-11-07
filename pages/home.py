@@ -192,6 +192,7 @@ def show_home_page():
             )
 
             activities = [
+                "Select an activity",
 
                 "Football",
 
@@ -211,7 +212,8 @@ def show_home_page():
 
                 "Select your outdoor activity:",
 
-                activities
+                activities,
+                index = 0
 
             )
 
@@ -225,9 +227,15 @@ def show_home_page():
 
             if submitted:
 
-                if not location.strip():
+                location = location.strip()
+
+                if not location:
 
                     st.warning("Please enter your location.")
+
+                elif activity == "Select an activity":
+
+                    st.warning("Please select an outdoor activity.")
 
                 else:
 
@@ -239,7 +247,9 @@ def show_home_page():
 
                     st.info(
 
-                        "Weather assessment will be available soon."
+                        "Weather assessment will be connected "
+
+                        "during integration."
 
                     )
 
