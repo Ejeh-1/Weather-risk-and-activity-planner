@@ -128,7 +128,7 @@ class LocationService:
                     continue
 
                 # Check for require fields
-                required_field = ["name", "latitude", "longitude"]
+                required_fields = ["name", "latitude", "longitude"]
 
                 if not all(field in location for field in required_fields):
                     continue
