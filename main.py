@@ -1,5 +1,7 @@
 import streamlit as st
 
+from pages.home import show_home_page
+
 def main():
 
     st.set_page_config(
@@ -12,17 +14,7 @@ def main():
 
     )
 
-    st.title("🌦️ Weather Risk & Outdoor Activity Planner")
-
-    st.write(
-
-        "Welcome! Plan your outdoor activities safely "
-
-        "with weather forecasts and risk assessments."
-
-    )
-
-    st.info("Our weather planning system is coming soon!")
+    show_home_page()
 
 if __name__ == "__main__":
 
