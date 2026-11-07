@@ -131,16 +131,16 @@ class Rating(Enum):
     RISKY = "Risky"
     AVOID = "Avoid"
 
-    @classmethod
-    def from_score(cls, score):
-        if score <= 1:
-             return cls.SAFE
-         elif score <= 3:
-             return cls.MANAGEABLE
-         elif score <= 5:
-              return cls.RISKY
-         else:
-             return cls.AVOID
+@classmethod
+def from_score(cls, score):
+     if score <= 1:
+        return cls.SAFE
+     elif score <= 3:
+        return cls.MANAGEABLE
+     elif score <= 5:
+        return cls.RISKY
+     else:
+        return cls.AVOID
 
     @dataclass
     class HourAssessment:
