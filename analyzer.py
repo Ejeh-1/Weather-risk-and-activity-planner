@@ -24,13 +24,13 @@ ACTIVITY_PROFILES = {
     30,
     85,
     [
-    "Warm up properly before playing.”,
-    “Take regular water breaks."
+    "Warm up properly before playing."
+    "Take regular water breaks."
     ],
     [
-    “Football boots”,
-    “Sportswear”,
-    “Towel”
+    "Football boots",
+    "Sportswear",
+    "Towel"
     ]
     ),
 
