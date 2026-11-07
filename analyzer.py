@@ -133,10 +133,10 @@ class Rating(Enum):
 
     @classmethod
     def from_score(cls, score):
-          if score <= 1:
-              return cls.SAFE
+        if score <= 1:
+             return cls.SAFE
          elif score <= 3:
-            return cls.MANAGEABLE
+             return cls.MANAGEABLE
          elif score <= 5:
               return cls.RISKY
          else:
