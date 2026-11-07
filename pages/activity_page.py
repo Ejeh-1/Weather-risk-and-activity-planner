@@ -88,13 +88,15 @@ def show_activity_page():
 
         if submitted:
 
-            if not location.strip():
+            location = location.strip()
+
+            if not location:
 
                 st.warning("Please enter your location.")
 
             else:
 
-                st.success("Your activity plan has been created!")
+                st.success("Your activity details have been submitted!")
 
                 st.write("### 📌 Activity Details")
 
@@ -114,6 +116,6 @@ def show_activity_page():
 
                     "Weather risk assessment will be connected "
 
-                    "to this activity planner soon."
-
+                    "to this activity planner during integration."
                 )
+        
