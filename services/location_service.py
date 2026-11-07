@@ -33,7 +33,7 @@ class LocationService:
         if not isinstance(city_name, str):
             return []
 
-        city_name = city_name.strp()
+        city_name = city_name.strip()
         if not city_name:
             return []
             
