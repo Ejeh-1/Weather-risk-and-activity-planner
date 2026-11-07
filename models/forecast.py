@@ -36,7 +36,7 @@ WEATHER_DESCRIPTIONS = {
 
 @dataclass
 class ForecastHour:
-"""Stores weather information for a particular hour."""
+    """Stores weather information for a particular hour."""
 
     time: datetime
     temperature: float
