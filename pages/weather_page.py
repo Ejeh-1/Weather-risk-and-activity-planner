@@ -1,5 +1,11 @@
 import streamlit as st
 
+from services.location_service import LocationService
+
+from services.weather_client import WeatherClient
+
+from models.forecast import Forecast
+
 def show_weather_page():
 
     """Display the weather forecast page."""
@@ -36,77 +42,160 @@ def show_weather_page():
 
         )
 
-        if submitted:
-            
-            location = location.strip()
+    if submitted:
 
-            if not location:
+        location = location.strip()
 
-                st.warning("Please enter a location.")
+        if not location:
+
+            st.warning("Please enter a location.")
+
+        else:
+
+            with st.spinner("Searching for location..."):
+
+                location_service = LocationService()
+
+                locations = location_service.search_location(location)
+
+            if not locations:
+
+                st.error("Location not found. Please try another city.")
 
             else:
 
-                st.success(
+                selected_location = locations[0]
 
-                    f"Searching weather information for {location}."
+                latitude = selected_location["latitude"]
 
-                )
+                longitude = selected_location["longitude"]
 
-                st.info(
+                city = selected_location["name"]
 
-                    "Weather forecast data will appear here "
+                country = selected_location.get("country", "")
 
-                    "after connecting the Open-Meteo API."
+                st.success(f"Location found: {city}, {country}")
 
-                ) 
+                with st.spinner("Fetching weather information..."):
 
-    st.divider()
+                    weather_client = WeatherClient()
 
-    st.subheader("🌦️ Weather Information")
+                    weather_data = weather_client.get_weather(
 
-    col1, col2 = st.columns(2)
+                        latitude,
 
-    with col1:
+                        longitude
 
-        st.metric(
+                    )
 
-            label="Temperature",
+                if not weather_data:
 
-            value="-- °C"
+                    st.error(
 
-        )
+                        "Unable to retrieve weather information. "
 
-        st.metric(
+                        "Please try again."
 
-            label="Humidity",
+                    )
 
-            value="-- %"
+                else:
 
-        )
+                    forecast = Forecast(weather_data)
 
-    with col2:
+                    weather = forecast.to_dict()
 
-        st.metric(
+                    st.divider()
 
-            label="Wind Speed",
+                    st.subheader("🌡️ Current Weather Information")
 
-            value="-- km/h"
+                    col1, col2 = st.columns(2)
 
-        )
+                    temperature = weather["temperature"]
 
-        st.metric(
+                    humidity = weather["humidity"]
 
-            label="Rain Probability",
+                    wind_speed = weather["wind_speed"]
 
-            value="-- %"
+                    rain_probability = weather["rain_probability"]
 
-        )
+                    with col1:
 
-    st.divider()
+                        st.metric(
 
-    st.subheader("📅 Weather Forecast")
+                            "Temperature",
 
-    st.info(
+                            f"{temperature} °C"
 
-        "Your upcoming weather forecast will appear here."
-    )
+                            if temperature is not None else "--"
+
+                        )
+
+                        st.metric(
+
+                            "Humidity",
+
+                            f"{humidity}%"
+
+                            if humidity is not None else "--"
+
+                        )
+
+                    with col2:
+
+                        st.metric(
+
+                            "Wind Speed",
+
+                            f"{wind_speed} km/h"
+
+                            if wind_speed is not None else "--"
+
+                        )
+
+                        st.metric(
+
+                            "Rain Probability",
+
+                            f"{rain_probability}%"
+
+                            if rain_probability is not None else "--"
+
+                        )
+
+                    st.divider()
+
+                    st.subheader("🌦️ Upcoming Weather Forecast")
+
+                    hourly = forecast.get_hourly_forecast()
+
+                    times = hourly.get("time", [])
+
+                    probabilities = hourly.get(
+
+                        "precipitation_probability", []
+
+                    )
+
+                    if times and probabilities:
+
+                        st.dataframe(
+
+                            {
+
+                                "Time": times[:24],
+
+                                "Rain Probability (%)": probabilities[:24]
+
+                            },
+
+                            use_container_width=True
+
+                        )
+
+                    else:
+
+                        st.info(
+
+                            "Hourly forecast information is unavailable."
+
+                        )
