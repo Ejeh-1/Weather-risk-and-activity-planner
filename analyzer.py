@@ -128,7 +128,7 @@ ACTIVITY_PROFILES = {
 class Rating(Enum):
     SAFE = "Safe"
     MANAGEABLE = "Manageable"
-     RISKY = "Risky"
+    RISKY = "Risky"
     AVOID = "Avoid"
 
     @classmethod
