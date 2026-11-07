@@ -37,8 +37,10 @@ def show_weather_page():
         )
 
         if submitted:
+            
+            location = location.strip()
 
-            if not location.strip():
+            if not location:
 
                 st.warning("Please enter a location.")
 
@@ -56,7 +58,7 @@ def show_weather_page():
 
                     "after connecting the Open-Meteo API."
 
-                )
+                ) 
 
     st.divider()
 
