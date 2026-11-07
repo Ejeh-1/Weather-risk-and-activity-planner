@@ -102,12 +102,48 @@ class RecommendationEngine:
         return best
 
     def window_at(self, assessments: List[HourAssessment], start: time, duration: int) -> TimeWindow:
-        for i, a in enumerate(assessments):
-            if a.hour.time.hour == start.hour:
-                chunk = assessments[i:i + duration]
-                return TimeWindow(chunk, self._window_score(chunk))
-        first, last = assessments[0].hour.time.hour, assessments[-1].hour.time.hour
-        raise InvalidInputError(f"{start:%H:%M} is outside the available hours ({first:02d}:00-{last:02d}:59).")
+
+    for i, a in enumerate(assessments):
+
+        if a.hour.time.hour == start.hour:
+
+            chunk = assessments[i:i + duration]
+
+            if len(chunk) < duration:
+
+                raise InvalidInputError(
+
+                    "The requested duration is not fully available. "
+
+                    "Please choose an earlier starting time."
+
+                )
+
+            for j in range(len(chunk) - 1):
+
+                difference = chunk[j + 1].hour.time - chunk[j].hour.time
+
+                if difference.total_seconds() != 3600:
+
+                    raise InvalidInputError(
+
+                        "The selected time window contains a gap. "
+
+                        "Please choose another starting time."
+
+                    )
+
+            return TimeWindow(chunk, self._window_score(chunk))
+
+    first, last = assessments[0].hour.time.hour, assessments[-1].hour.time.hour
+
+    raise InvalidInputError(
+
+        f"{start:%H:%M} is outside the available hours "
+
+        f"({first:02d}:00-{last:02d}:59)."
+
+    )
 
     # ---- advice and checklist ---------------------------------------------
     @staticmethod
