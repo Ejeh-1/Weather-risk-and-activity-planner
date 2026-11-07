@@ -2,6 +2,18 @@ import streamlit as st
 
 from datetime import date, time
 
+from services.location_service import LocationService
+
+from services.weather_client import WeatherClient
+
+from models import Forecast, Location
+
+from analyzer import ActivityRiskAnalyzer
+
+from recommender import RecommendationEngine
+
+from exceptions import InvalidInputError, WeatherDataError
+
 def show_activity_page():
 
     """Display the outdoor activity planning page."""
@@ -38,7 +50,7 @@ def show_activity_page():
 
     with st.form("activity_planning_form"):
 
-        location = st.text_input(
+        location_input = st.text_input(
 
             "📍 Enter your location:",
 
@@ -86,36 +98,121 @@ def show_activity_page():
 
         )
 
-        if submitted:
+    if submitted:
 
-            location = location.strip()
+        if not location_input.strip():
 
-            if not location:
+            st.warning("Please enter your location.")
 
-                st.warning("Please enter your location.")
+        else:
 
-            else:
+            with st.spinner("Retrieving weather forecast and assessing risks..."):
 
-                st.success("Your activity details have been submitted!")
+                try:
 
-                st.write("### 📌 Activity Details")
+                    location_service = LocationService()
 
-                st.write(f"**Location:** {location}")
+                    locations = location_service.search_location(
 
-                st.write(f"**Activity:** {activity}")
+                        location_input.strip()
 
-                st.write(f"**Date:** {activity_date}")
+                    )
 
-                st.write(f"**Time:** {activity_time}")
+                    if not locations:
 
-                if notes.strip():
+                        st.error("Location not found. Please try another location.")
 
-                    st.write(f"**Notes:** {notes}")
+                    else:
 
-                st.info(
+                        location_data = locations[0]
 
-                    "Weather risk assessment will be connected "
+                        selected_location = Location(
 
-                    "to this activity planner during integration."
-                )
+                            name=location_data["name"],
+
+                            country=location_data.get("country") or "",
+
+                            latitude=location_data["latitude"],
+
+                            longitude=location_data["longitude"],
+
+                            timezone=location_data.get("timezone") or "UTC"
+
+                        )
+
+                        weather_client = WeatherClient()
+
+                        weather_data = weather_client.get_weather(
+
+                            selected_location.latitude,
+
+                            selected_location.longitude
+
+                        )
+
+                        if not weather_data:
+
+                            st.error("Unable to retrieve weather data. Please try again.")
+
+                        else:
+
+                            forecast = Forecast(
+
+                                weather_data,
+
+                                location=selected_location
+
+                            )
+
+                            analyzer = ActivityRiskAnalyzer(activity)
+
+                            recommendation_engine = RecommendationEngine(
+
+                                analyzer
+
+                            )
+
+                            plan = recommendation_engine.build_plan(
+
+                                forecast=forecast,
+
+                                day=activity_date,
+
+                                duration=2,
+
+                                start=activity_time
+
+                            )
+
+                            st.success("Your activity plan has been created!")
+
+                            st.divider()
+
+                            st.subheader("📌 Activity Risk Assessment")
+
+                            st.write(plan.to_text())
+
+                            st.divider()
+
+                            st.subheader("⏰ Hourly Weather Risk Assessment")
+
+                            st.code(plan.hourly_table())
+
+                            if notes.strip():
+
+                                st.write("**Additional notes:**")
+
+                                st.write(notes)
+
+                except (InvalidInputError, WeatherDataError, ValueError) as error:
+
+                    st.warning(str(error))
+
+                except Exception as error:
+
+                    st.error(
+
+                        f"An unexpected error occurred: {error}"
+
+                    )
         
