@@ -126,10 +126,10 @@ ACTIVITY_PROFILES = {
     }
 
     class Rating(Enum):
-        SAFE = “Safe”
-        MANAGEABLE = “Manageable”
-        RISKY = “Risky”
-        AVOID = “Avoid”
+        SAFE = "Safe"
+        MANAGEABLE = "Manageable"
+        RISKY = "Risky
+        AVOID = "Avoid
 
         @classmethod
         def from_score(cls, score):
