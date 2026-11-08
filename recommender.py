@@ -79,7 +79,7 @@ class RecommendationEngine:
         start_h, end_h = self.activity.active_hours
         hours = forecast.daytime_hours(day, start_h, end_h)
         if forecast.local_now and day == forecast.local_now.date():
-            cutoff = forecast.local_now.replace(minute=0, second=0, microsecond=0)
+            cutoff = forecast.location_now.replace(minute=0, second=0, microsecond=0).replace(tzinfo=None)
             hours = [h for h in hours if h.time >= cutoff]
         if not hours:
             raise WeatherDataError(
