@@ -122,12 +122,14 @@ class StorageManager:
     def remove_favourite(self, location: str) -> bool:
         location = self._required_text(location, "Location")
         records = self._read(self.favourites_file)
-        remaining = [item for item in records
-                     if item.get("location", "").casefold() != location.casefold()]
+        remaining = [
+            item for item in records
+            if item.get("location", "").casefold() != location.casefold()
+        ]
         if len(remaining) == len(records):
             return False
-        self._write(self.favourites_file, remaining)
-        return True
+            self._write(self.favourites_file, remaining)
+            return True
 
     def save_activity_plan(self, plan: Any) -> Dict[str, Any]:
         """Save a plan dictionary or an ActivityPlan/dataclass instance."""
@@ -151,3 +153,7 @@ class StorageManager:
         records = self._read(self.plans_file)
         records.reverse()
         return records[:limit] if limit is not None else records
+
+    def clear_activity_plans(self) -> None:
+        """Clear all saved activity plans."""
+        self._write(self.plans_file, [])
