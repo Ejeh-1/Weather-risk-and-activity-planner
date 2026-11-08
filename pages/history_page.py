@@ -250,7 +250,7 @@ def show_history_page():
 
                     if st.button("Remove", key=f"remove_{index}"):
 
-                        storage.remove_favourite(favourite)
+                        storage.remove_favourite(location_name)
 
                         st.success("Favourite removed!")
 
