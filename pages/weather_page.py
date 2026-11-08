@@ -8,6 +8,8 @@ from models.forecast import Forecast
 
 from exceptions import LocationServiceError, WeatherDataError
 
+from managers.storage import StorageManager
+
 def show_weather_page():
 
     """Display the weather forecast page."""
@@ -85,6 +87,16 @@ def show_weather_page():
                 country = selected_location.get("country", "")
 
                 st.success(f"Location found: {city}, {country}")
+                if st.button("⭐ Add to Favourites"):
+                    try:
+                        storage = StorageManager()
+                        saved = storage.add_favourite(city)
+                        if saved:
+                            st.success(f"{city} added to favourites!")
+                        else:
+                            st.info(f"{city} is already in your favourites.")
+                    except Exception as e:
+                        st.error(f"Could not save favourite: {e}")
 
                 try:
                     with st.spinner("Fetching weather information..."):
@@ -208,3 +220,15 @@ def show_weather_page():
                             "Hourly forecast information is unavailable."
 
                         )
+                    st.divider()
+                    st.subheader("⭐ My Favourite Locations")
+                    try:
+                        storage = StorageManager()
+                        favourites = storage.get_favourites()
+                        if favourites:
+                            for item in favourites:
+                                st.write(f"📍 {item['location']}")
+                        else:
+                            st.info("You have no favourite locations yet.")
+                    except Exception as e:
+                        st.error(f"Could not load favourite locations: {e}")
