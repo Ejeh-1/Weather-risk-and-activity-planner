@@ -85,7 +85,7 @@ class LocationService:
                 break
             except requests.exceptions.RequestException as e:
                 print(f"Location API attempt {attempt + 1} failed: {e}")
-                if attmpt == 2:
+                if attempt == 2:
                     return []
                 time.sleep(1)
 
