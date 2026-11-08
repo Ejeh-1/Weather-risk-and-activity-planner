@@ -6,6 +6,8 @@ from services.weather_client import WeatherClient
 
 from models.forecast import Forecast
 
+from exceptions import LocationServiceError, WeatherDataError
+
 def show_weather_page():
 
     """Display the weather forecast page."""
@@ -51,12 +53,21 @@ def show_weather_page():
             st.warning("Please enter a location.")
 
         else:
-
-            with st.spinner("Searching for location..."):
+            try:
+                with st.spinner("Searching for location..."):
 
                 location_service = LocationService()
 
                 locations = location_service.search_location(location)
+
+            except LocationServiceError as e:
+                st.error(f"Location service error: {e}")
+                return
+
+            except Exception as e:
+                st.error("An unexpected error occurred while searching for your location.")
+                return
+                
 
             if not locations:
 
