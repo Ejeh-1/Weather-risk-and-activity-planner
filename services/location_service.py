@@ -1,4 +1,5 @@
 import requests
+import time
 
 class LocationService:
 
@@ -71,23 +72,24 @@ class LocationService:
 
             params["countryCode"] = country_code
 
-        try:
-
-            # Send request to the Geocoding API
-
-            response = requests.get(
-
-                self.base_url,
-
-                params=params,
-
-                timeout=10
-
-            )
-
-            # Check for HTTP errors
-
-            response.raise_for_status()
+        
+        # Send request  to the geocoding API
+        for attempt in range(3):
+            try:
+                response = requests.get(
+                    self.base_url,
+                    params = params,
+                    timeout = 20
+                )
+                response.raise_for_status()
+                break
+            except requests.exceptions.RequestException as e:
+                print(f"Location API attempt {attempt + 1} failed: {e}")
+                if attmpt == 2:
+                    return []
+                time.sleep(1)
+                
+        
 
             # Convert API response
 
