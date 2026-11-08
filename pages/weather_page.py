@@ -88,17 +88,21 @@ def show_weather_page():
                 country = selected_location.get("country", "")
 
                 st.success(f"Location found: {city}, {country}")
-                if st.button("✨ Add to Favourites❤️"):
-                    try:
-                        with st.spinner("Fetching weather information..."):
-                            weather_client = WeatherClient()
-                            weather_data = weather_client.get_weather(
-                                latitude,
-                                longitude
-                            )
+                try:
+                    with st.spinner("Fetching weather information..."):
+                        weather_client = WeatherClient()
+                        weather_data = weather_client.get_weather(
+                            latitude,
+                            longitude
+                        )
+
                 except WeatherDataError as e:
+
                     st.error(f"Weather service error: {e}")
+
                     return
+                
+
 
                 if not weather_data:
 
