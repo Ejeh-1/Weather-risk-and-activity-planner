@@ -1,4 +1,4 @@
-"""JSON-backed storage for weather searches, favourite locations and activity plans.
+ """JSON-backed storage for weather searches, favourite locations and activity plans.
 
 No third-party dependencies are required. Data is stored in the project's data/ folder.
 """
