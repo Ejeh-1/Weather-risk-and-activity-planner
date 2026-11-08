@@ -19,7 +19,7 @@ from pages.history_page import show_history_page
 
 def show_home_page():
 
-    st.title("🌦️ Weather Risk & Activity Planner")
+    st.title("🌦️ Weather Risk & Outdoor Activity Planner")
 
     st.write("Plan your outdoor activities safely.")
 
