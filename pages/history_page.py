@@ -269,6 +269,7 @@ def show_history_page():
         st.divider()
 
         if st.button("🔄 Refresh History"):
+            st.success("History refresh successfully✅")
 
             st.rerun()
 
