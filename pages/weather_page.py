@@ -55,10 +55,9 @@ def show_weather_page():
         else:
             try:
                 with st.spinner("Searching for location..."):
+                    location_service = LocationService()
 
-                location_service = LocationService()
-
-                locations = location_service.search_location(location)
+                    locations = location_service.search_location(location)
 
             except LocationServiceError as e:
                 st.error(f"Location service error: {e}")
