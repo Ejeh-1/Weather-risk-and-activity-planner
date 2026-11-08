@@ -258,17 +258,16 @@ def show_home_page():
 
                     try:
 
-    # 1. Find the location
+                       # 1. Find the location
 
-    location_service = LocationService()
+                       location_service = LocationService()
 
-    locations = location_service.search_location(location)
+                       locations = location_service.search_location(location)
 
-    if not locations:
+                       if not locations:
+                           st.error("Location not found. Please check the spelling.")
 
-        st.error("Location not found. Please check the spelling.")
-
-        return
+                           return
 
     # Use the first matching location
 
