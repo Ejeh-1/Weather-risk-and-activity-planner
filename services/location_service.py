@@ -84,10 +84,18 @@ class LocationService:
                 response.raise_for_status()
                 break
             except requests.exceptions.RequestException as e:
-                print(f"Location API attempt {attempt + 1} failed: {e}")
-                if attempt == 2:
-                    return []
-                time.sleep(1)
+
+    print(f"Location API attempt {attempt + 1} failed: {e}")
+
+    if attempt == 2:
+
+        raise LocationServiceError(
+
+            "Unable to connect to the location service. Please check your internet connection and try again."
+
+        ) from e
+
+    time.sleep(1)
 
         # Convert API response
 
@@ -95,28 +103,39 @@ class LocationService:
 
             data = response.json()
 
-        except ValueError:
+        except ValueError as e:
 
-            print("Location API error: Invalid JSON response")
-
-            return []
+            raise LocationServiceError(
+                "The location service returned an invalid response."
+            ) from e
 
         # Ensure the API response is a dictionary
-
         if not isinstance(data, dict):
 
-            return []
+            raise LocationServiceError(
 
-        # Extract matching locations
+                "The location service returned an unexpected response."
 
-        locations = data.get("results", [])
+            )
 
-        # Ensure results contain a list
+        if "results" not in data:
+
+            raise LocationServiceError(
+
+                "The location service response is missing location results."
+
+            )
+
+        locations = data["results"]
 
         if not isinstance(locations, list):
 
-            return []
+            raise LocationServiceError(
 
+                "The location service returned invalid location data."
+            )
+
+    
         # Return relevant location information
 
         valid_locations = []
