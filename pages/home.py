@@ -143,7 +143,7 @@ def show_home_page():
             try:
                 storage = StorageManager()
                 storage.save_search(
-                    storage = selected_location.label,
+                    location = selected_location.label,
                     activity = activity,
                     search_data = {
                         "temperature": forecast.get_temperature(),
