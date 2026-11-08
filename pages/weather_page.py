@@ -83,20 +83,13 @@ def show_weather_page():
                 longitude = selected_location["longitude"]
 
                 city = selected_location["name"]
+                st.session_state["weather_city"] = city
 
                 country = selected_location.get("country", "")
 
                 st.success(f"Location found: {city}, {country}")
-                if st.button("⭐ Add to Favourites"):
-                    try:
-                        storage = StorageManager()
-                        saved = storage.add_favourite(city)
-                        if saved:
-                            st.success(f"{city} added to favourites!")
-                        else:
-                            st.info(f"{city} is already in your favourites.")
-                    except Exception as e:
-                        st.error(f"Could not save favourite: {e}")
+                if st.button("✨ Add to Favourites❤️"):
+            
 
                 try:
                     with st.spinner("Fetching weather information..."):
@@ -220,15 +213,51 @@ def show_weather_page():
                             "Hourly forecast information is unavailable."
 
                         )
-                    st.divider()
-                    st.subheader("⭐ My Favourite Locations")
-                    try:
-                        storage = StorageManager()
-                        favourites = storage.get_favourites()
-                        if favourites:
-                            for item in favourites:
-                                st.write(f"📍 {item['location']}")
-                        else:
-                            st.info("You have no favourite locations yet.")
-                    except Exception as e:
-                        st.error(f"Could not load favourite locations: {e}")
+                        
+    st.divider()
+
+    st.subheader("✨My Favourite Locations❤️")
+
+    city = st.session_state.get("weather_city")
+
+    if city:
+
+        if st.button("✨Add to Favourites❤️"):
+
+            try:
+
+                storage = StorageManager()
+
+                saved = storage.add_favourite(city)
+
+                if saved:
+
+                    st.success(f"{city} added to favourites!")
+
+                else:
+
+                    st.info(f"{city} is already in your favourites.")
+
+            except Exception as e:
+
+                st.error(f"Could not save favourite: {e}")
+
+    try:
+
+        storage = StorageManager()
+
+        favourites = storage.get_favourites()
+
+        if favourites:
+
+            for item in favourites:
+
+                st.write(f"📍 {item['location']}")
+
+        else:
+
+            st.info("You have no favourite locations yet.")
+
+    except Exception as e:
+
+        st.error(f"Could not load favourite locations: {e}")
