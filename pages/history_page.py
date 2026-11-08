@@ -1,8 +1,8 @@
 import streamlit as st
 
-def show_history_page():
+from managers.storage import StorageManager, StorageError
 
-    """Display previous weather searches and activity plans."""
+def show_history_page():
 
     st.title("📋 Weather History")
 
@@ -14,44 +14,96 @@ def show_history_page():
 
     )
 
-    st.divider()
+    storage = StorageManager()
 
-    st.subheader("🔍 Search History")
+    try:
 
-    st.info(
+        # Search History
 
-        "Your previous weather searches will appear here "
+        st.divider()
 
-        "when history storage is connected."
+        st.subheader("🔍 Search History")
 
-    )
+        searches = storage.get_search_history()
 
-    st.divider()
+        if searches:
 
-    st.subheader("🏃 Activity Planning History")
+            for search in searches:
 
-    st.info(
+                st.write(search)
 
-        "Your saved outdoor activity plans will appear here "
+        else:
 
-        "when storage functionality is connected."
+            st.info("No previous weather searches found.")
 
-    )
+        if st.button("🗑️ Clear Search History"):
 
-    st.divider()
+            storage.clear_search_history()
 
-    st.subheader("⭐ Favourite Locations")
+            st.success("Search history cleared!")
 
-    st.info(
+            st.rerun()
 
-        "Your favourite locations will appear here "
+        # Activity Plans
 
-        "when the storage system is connected."
+        st.divider()
 
-    )
+        st.subheader("🏃 Activity Planning History")
 
-    st.divider()
+        plans = storage.get_activity_plans()
 
-    if st.button("🔄 Refresh History"):
+        if plans:
 
-        st.rerun()
+            for plan in plans:
+
+                st.write(plan)
+
+        else:
+
+            st.info("No saved activity plans found.")
+
+        # Favourite Locations
+
+        st.divider()
+
+        st.subheader("⭐ Favourite Locations")
+
+        favourites = storage.get_favourites()
+
+        if favourites:
+
+            for favourite in favourites:
+
+                st.write(favourite)
+
+            location_to_remove = st.selectbox(
+
+                "Select a favourite to remove",
+
+                favourites
+
+            )
+
+            if st.button("Remove Favourite"):
+
+                storage.remove_favourite(location_to_remove)
+
+                st.success("Favourite removed!")
+
+                st.rerun()
+
+        else:
+
+            st.info("No favourite locations saved.")
+
+        if st.button("🔄 Refresh History"):
+
+            st.rerun()
+
+    except StorageError as error:
+
+        st.error(f"Storage error: {error}")
+
+    except Exception as error:
+
+        st.error(f"Something went wrong: {error}")
