@@ -51,7 +51,10 @@ def show_home_page():
 
     st.subheader("Check Your Weather Risk")
 
-    location = st.text_input("Enter your location")
+    location = st.text_input(
+        "Enter your location",
+        placeholder = "E.g. Lokoja, Nigeria"
+    )
 
     activity = st.selectbox(
 
