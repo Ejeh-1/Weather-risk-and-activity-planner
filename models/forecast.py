@@ -61,6 +61,7 @@ class Forecast:
         self.timezone = self.weather_data.get("timezone", "UTC")
         # Gets the current local time for the forecast location
         self.local_now = self._get_local_now()
+        self.location_now = self.local_now
     def _get_local_now(self):
         """Returns the current time in the forecast location's timezone."""
         try:
