@@ -2,6 +2,17 @@ import streamlit as st
 from pages.weather_page import show_weather_page
 from pages.activity_page import show_activity_page
 from pages.history_page import show_history_page
+from datetime import date, timedelta
+
+from services.location_service import LocationService
+
+from services.weather_client import WeatherClient
+
+from models import Forecast, Location
+
+from analyzer import ActivityRiskAnalyzer
+
+from recommender import RecommendationEngine
 
 def show_home_page():
 
@@ -245,13 +256,133 @@ def show_home_page():
 
                     )
 
-                    st.info(
+                    try:
 
-                        "Weather assessment will be connected "
+    # 1. Find the location
 
-                        "during integration."
+    location_service = LocationService()
 
-                    )
+    locations = location_service.search_location(location)
+
+    if not locations:
+
+        st.error("Location not found. Please check the spelling.")
+
+        return
+
+    # Use the first matching location
+
+    location_data = locations[0]
+
+    selected_location = Location(
+
+        name=location_data["name"],
+
+        country=location_data.get("country") or "",
+
+        latitude=location_data["latitude"],
+
+        longitude=location_data["longitude"],
+
+        timezone=location_data.get("timezone") or "auto"
+
+    )
+
+    # 2. Retrieve weather forecast
+
+    weather_client = WeatherClient()
+
+    weather_data = weather_client.get_weather(
+
+        selected_location.latitude,
+
+        selected_location.longitude
+
+    )
+
+    if not weather_data:
+
+        st.error("Unable to retrieve weather data. Please try again.")
+
+        return
+
+    # 3. Process the forecast
+
+    forecast = Forecast(weather_data, selected_location)
+
+    # 4. Analyze weather risks
+
+    activity_key = activity.lower().replace(" ", "_")
+
+    analyzer = ActivityRiskAnalyzer(activity=activity_key)
+
+    # 5. Generate activity recommendations
+
+    engine = RecommendationEngine(analyzer)
+
+    plan = engine.build_plan(
+
+        forecast=forecast,
+
+        day=forecast.local_now.date(),
+
+        duration=2
+
+    )
+
+    # 6. Display results
+
+    st.success("Weather assessment completed!")
+
+    st.subheader("📍 Location")
+
+    st.write(selected_location.label)
+
+    st.subheader("🌤️ Current Weather")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        st.metric("Temperature", f"{forecast.get_temperature()} °C")
+
+    with col2:
+
+        st.metric("Humidity", f"{forecast.get_humidity()}%")
+
+    with col3:
+
+        st.metric("Wind Speed", f"{forecast.get_wind_speed()} km/h")
+
+    st.subheader("🛡️ Activity Risk Assessment")
+
+    st.write(f"Activity: {activity}")
+
+    st.write(f"Risk Rating: **{plan.rating.value}**")
+
+    st.write(f"Recommended Time: **{plan.window.label}**")
+
+    st.subheader("Why this rating?")
+
+    for reason in plan.reasons:
+
+        st.write(f"- {reason}")
+
+    st.subheader("Safety Advice")
+
+    for advice in plan.advice:
+
+        st.write(f"- {advice}")
+
+    st.subheader("Packing Checklist")
+
+    for item in plan.checklist:
+
+        st.write(f"- {item}")
+
+except Exception as error:
+
+    st.error(f"Unable to complete weather assessment: {error}")
 
     elif menu == "Weather Forecast":
         show_weather_page()
