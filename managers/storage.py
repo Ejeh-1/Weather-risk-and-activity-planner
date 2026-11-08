@@ -1,7 +1,5 @@
 import streamlit as st
 
-from managers.storage import StorageManager, StorageError
-
 def show_history_page():
 
     """Display previous weather searches and activity plans."""
