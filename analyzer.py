@@ -111,7 +111,7 @@ ACTIVITY_PROFILES = {
         ]
     ),
 
-    "outdoor events": ActivityProfile(
+    "outdoor_events": ActivityProfile(
         "Outdoor Events",
         (7, 21),
         34,
