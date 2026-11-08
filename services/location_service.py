@@ -84,18 +84,13 @@ class LocationService:
                 response.raise_for_status()
                 break
             except requests.exceptions.RequestException as e:
+                print(f"Location API attempt {attempt + 1} failed: {e}")
 
-    print(f"Location API attempt {attempt + 1} failed: {e}")
-
-    if attempt == 2:
-
-        raise LocationServiceError(
-
-            "Unable to connect to the location service. Please check your internet connection and try again."
-
-        ) from e
-
-    time.sleep(1)
+                if attempt == 2:
+                    raise LocationServiceError(
+                        "Unable to connect to the location service. Please check your internet connection and try again."
+                    ) from e
+                    time.sleep(1)
 
         # Convert API response
 
