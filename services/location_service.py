@@ -91,14 +91,14 @@ class LocationService:
                 
         
 
-            # Convert API response
+         # Convert API response
 
-            try:
-                data = response.json()
+         try:
+             data = response.json()
 
-            except ValueError:
-                print("Location API error: Invalid JSON response")
-                return []
+         except ValueError:
+             print("Location API error: Invalid JSON response")
+             return []
                 
                 
 
@@ -170,10 +170,3 @@ class LocationService:
             
  
 
-        except requests.exceptions.RequestException as e:
-
-            # Handle API connection errors
-
-            print(f"Location API error: {e}")
-
-            return []
