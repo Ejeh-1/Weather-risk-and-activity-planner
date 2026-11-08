@@ -1,4 +1,5 @@
 import streamlit as st
+from managers.storage import StorageManager, StorageError 
 
 from services.location_service import LocationService
 
@@ -139,6 +140,27 @@ def show_home_page():
                 duration=2
 
             )
+            try:
+                storage = StorageManager()
+                storage.save_search(
+                    storage = selected_location.label,
+                    activity = activity,
+                    search_data = {
+                        "temperature": forecast.get_temperature(),
+                        "humidity": forecast.get_humidity(),
+                        "wind_speed": forecast.get_wind_speed(),
+                        "risk_rating": plan.rating.value,
+                        "recommended_time": plan.window.label
+                    }
+                )
+                storage.save_activity_plan(plan)
+            except (StorageError, ValueError) as error:
+                st.warning(f"Unable to save history: {error}")
+                
+                
+                        
+                    
+                
 
             st.success("Weather assessment completed!")
 
