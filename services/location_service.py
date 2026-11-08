@@ -1,5 +1,6 @@
 import requests
 import time
+from exceptions import LocationServiceError
 
 class LocationService:
 
