@@ -245,7 +245,7 @@ def show_history_page():
                             st.error("Could not find this favourite location.")
                             st.rerun()
                     else:
-                        st.info("No favourite locations saved yet."
+                        st.info("No favourite locations saved yet.")
 
         # ==========================
 
