@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local application data
+data/activity_plans.json
+data/favourites.json
+data/search_history.json
