@@ -124,9 +124,9 @@ class StorageManager:
         location = self._required_text(location, "Location")
 
         records = self._read(self.favourites_file)
-
+        print("SAVED RECORDS:", records)
+        print("LOCATION TO REMOVE:", repr(location))
         remaining = [
-
             item for item in records
             if item.get("location", "").casefold() != location.casefold()
         ]
