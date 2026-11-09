@@ -212,6 +212,12 @@ def show_history_page():
 
                         st.info("No packing checklist available.")
 
+       
+            if st.button("🗑️ Clear Activity Planning History"):
+                storage.clear_activity_plans()
+                st.success("Activity planning history cleared!")
+                st.rerun()
+        
         else:
 
             st.info("No saved activity plans found.")
@@ -224,7 +230,7 @@ def show_history_page():
 
         st.divider()
 
-        st.subheader("⭐ Favourite Locations")
+        st.subheader("✨ Favourite Locations")
 
         favourites = storage.get_favourites()
 
