@@ -221,52 +221,31 @@ def show_history_page():
         else:
 
             st.info("No saved activity plans found.")
-
         # ==========================
-
         # FAVOURITE LOCATIONS
-
         # ==========================
-
         st.divider()
-
         st.subheader("✨ Favourite Locations")
-
         favourites = storage.get_favourites()
 
         if favourites:
-
             for index, favourite in enumerate(favourites):
-
-                if isinstance(favourite, dict):
-
-                    location_name = favourite.get("location", str(favourite))
-
-                else:
-
-                    location_name = favourite
-
+                location_name = favourite.get("location", "") if isinstance(favourite, dict) else str(favourite)
                 col1, col2 = st.columns([4, 1])
-
+                
                 with col1:
-
                     st.write(f"📍 {location_name}")
-
+                    
                 with col2:
-
                     if st.button("Remove", key=f"remove_{index}"):
-
-                        storage.remove_favourite(location_name)
-
-                        st.success("Favourite removed!")
+                        removed = storage.remove_favourite(location_name)
+                        if removed:
+                            st.success(f"{location_name} removed successfully!")
+                        else:
+                            st.error("Could not find this favourite location.")
+                            st.rerun()
                     else:
-                        st.warning("Favourite location not found")
-
-                    st.rerun()
-
-        else:
-
-            st.info("No favourite locations saved yet.")
+                        st.info("No favourite locations saved yet."
 
         # ==========================
 
@@ -276,10 +255,15 @@ def show_history_page():
 
         st.divider()
 
-        if st.button("🔄 Refresh History"):
-            st.success("History refresh successfully✅")
+        if st.button("🔄 Refresh History", use_container_width=True):
+
+            st.cache_data.clear()
+
+            st.success("History refreshed successfully! ✅")
 
             st.rerun()
+
+    
 
     except StorageError as error:
 
