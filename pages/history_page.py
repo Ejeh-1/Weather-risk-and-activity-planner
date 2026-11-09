@@ -259,8 +259,10 @@ def show_history_page():
                         storage.remove_favourite(location_name)
 
                         st.success("Favourite removed!")
+                    else:
+                        st.warning("Favourite location not found")
 
-                        st.rerun()
+                    st.rerun()
 
         else:
 
